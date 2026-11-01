@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block titulo %}{{ titulo }}{% endblock %}
+{% block contenido %}
+<div class="row justify-content-center"><div class="col-lg-6">
+  <div class="card shadow-sm"><div class="card-body">
+    <h4 class="card-title">{{ titulo }}</h4>
+    <p>{{ mensaje }}</p>
+    <form method="post">{% csrf_token %}
+      <button class="btn btn-{{ boton_clase|default:'danger' }}">{{ boton|default:'Confirmar' }}</button>
+      <a class="btn btn-link" href="{% if volver_url %}{{ volver_url }}{% else %}{% url volver %}{% endif %}">Cancelar</a>
+    </form>
+  </div></div>
+</div></div>
+{% endblock %}

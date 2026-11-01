@@ -1,0 +1,46 @@
+{% extends 'base.html' %}{% load casino %}
+{% block titulo %}Historial {{ jugador.codigo_cliente }}{% endblock %}
+{% block contenido %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h3>Historial de {{ jugador.persona.nombre_completo }} <small class="text-muted">{{ jugador.codigo_cliente }}</small></h3>
+  {% if vista_admin %}<div>
+    <a class="btn btn-outline-primary" href="{% url 'jugadores:movimiento_nuevo' %}?jugador={{ jugador.pk }}">Registrar movimiento</a>
+    {% if jugador.estado == 'Investigación' %}<a class="btn btn-danger" href="{% url 'jugadores:cerrar_investigacion' jugador.pk %}">Cerrar investigación</a>{% endif %}
+  </div>{% endif %}
+</div>
+<div class="row g-3 mb-3">
+  <div class="col-md-3"><div class="card card-metrica"><div class="card-body"><div class="text-muted small">Estado</div><span class="badge fs-6 bg-{{ jugador.estado|clase_estado }}">{{ jugador.estado }}</span>
+    {% if jugador.suspendido_hasta %}<div class="small">hasta {{ jugador.suspendido_hasta|date:'Y-m-d H:i' }}</div>{% endif %}</div></div></div>
+  <div class="col-md-3"><div class="card card-metrica"><div class="card-body"><div class="text-muted small">Saldo</div><div class="valor">{{ jugador.saldo_fichas|fichas }}</div></div></div></div>
+  <div class="col-md-3"><div class="card card-metrica"><div class="card-body"><div class="text-muted small">Ganado / perdido (total)</div><div><span class="text-success">{{ ganado|fichas }}</span> / <span class="text-danger">{{ perdido|fichas }}</span></div></div></div></div>
+  <div class="col-md-3"><div class="card card-metrica"><div class="card-body"><div class="text-muted small">Pérdidas hoy / umbral</div><div>{{ perdidas_hoy|fichas }} / {{ umbral|fichas }}</div></div></div></div>
+</div>
+{% if empleado %}
+<div class="alert alert-info">Este jugador es empleado ({{ empleado.cargo }}, salario {{ empleado.salario|fichas }}).
+  Pérdidas netas últimos 30 días: <strong>{{ deuda_empleado|fichas }}</strong> (límite 2 salarios: {{ limite_deuda|fichas }}) ·
+  Ganancias netas desde el último cierre de investigación: <strong>{{ ganancias_empleado|fichas }}</strong> (límite 1 salario: {{ empleado.salario|fichas }}).</div>
+{% endif %}
+
+<ul class="nav nav-tabs" role="tablist">
+  <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#apuestas">Apuestas</button></li>
+  <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#movimientos">Consignaciones y retiros</button></li>
+  <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#estados">Cambios de estado</button></li>
+</ul>
+<div class="tab-content card border-top-0 shadow-sm">
+  <div class="tab-pane fade show active" id="apuestas"><div class="table-responsive"><table class="table table-sm mb-0">
+    <thead><tr><th>Fecha</th><th>Mesa</th><th>Ronda</th><th>Tipo</th><th class="text-end">Monto</th><th>Factor</th><th>Resultado</th><th>Estado</th><th class="text-end">Premio</th></tr></thead>
+    <tbody>{% for a in apuestas %}<tr><td>{{ a.ronda.hora_inicio|date:'Y-m-d H:i' }}</td><td>{{ a.ronda.mesa }}</td><td>#{{ a.ronda.numero }}</td><td>{{ a.tipo_apuesta }}</td>
+      <td class="text-end">{{ a.monto_apostado|fichas }}</td><td>{{ a.factor_pago|factor }}</td><td>{{ a.ronda.resultado|default:'—' }}</td>
+      <td><span class="badge bg-{{ a.estado|clase_estado }}">{{ a.estado }}</span></td><td class="text-end">{{ a.premio|fichas }}</td></tr>
+    {% empty %}<tr><td colspan="9" class="text-muted">Sin apuestas.</td></tr>{% endfor %}</tbody></table></div></div>
+  <div class="tab-pane fade" id="movimientos"><table class="table table-sm mb-0">
+    <thead><tr><th>Fecha</th><th>Tipo</th><th class="text-end">Monto</th><th>Estado</th><th>Observación</th></tr></thead>
+    <tbody>{% for m in movimientos %}<tr><td>{{ m.fecha|date:'Y-m-d H:i' }}</td><td>{{ m.get_tipo_display }}</td><td class="text-end">{{ m.monto|fichas }}</td><td><span class="badge bg-{{ m.estado|clase_estado }}">{{ m.estado }}</span></td><td>{{ m.observacion }}</td></tr>
+    {% empty %}<tr><td colspan="5" class="text-muted">Sin movimientos.</td></tr>{% endfor %}</tbody></table></div>
+  <div class="tab-pane fade" id="estados"><table class="table table-sm mb-0">
+    <thead><tr><th>Fecha</th><th>De</th><th>A</th><th>Motivo</th></tr></thead>
+    <tbody>{% for h in estados %}<tr><td>{{ h.fecha|date:'Y-m-d H:i' }}</td><td><span class="badge bg-{{ h.estado_anterior|clase_estado }}">{{ h.estado_anterior }}</span></td>
+      <td><span class="badge bg-{{ h.estado_nuevo|clase_estado }}">{{ h.estado_nuevo }}</span></td><td>{{ h.motivo }}</td></tr>
+    {% empty %}<tr><td colspan="4" class="text-muted">Sin cambios de estado.</td></tr>{% endfor %}</tbody></table></div>
+</div>
+{% endblock %}

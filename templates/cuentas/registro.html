@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block titulo %}Registro de jugador{% endblock %}
+{% block contenido %}
+<div class="row justify-content-center"><div class="col-lg-7">
+  <div class="card shadow-sm"><div class="card-body p-4">
+    <h3 class="card-title mb-3">Registro de jugador</h3>
+    <p class="text-muted">Todo jugador debe registrarse antes de participar. Solo se admiten mayores de edad.</p>
+    <form method="post" data-zk-salt="{{ salt }}" novalidate>{% csrf_token %}
+      <div class="alert alert-danger d-none zk-error"></div>
+      {% include '_campos.html' %}
+      {% include 'cuentas/_password_zk.html' %}
+      <button class="btn btn-primary">Registrarme</button>
+      <a class="btn btn-link" href="{% url 'cuentas:login' %}">Volver</a>
+    </form>
+  </div></div>
+</div></div>
+{% endblock %}

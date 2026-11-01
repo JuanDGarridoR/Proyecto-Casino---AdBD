@@ -1,0 +1,38 @@
+{% extends 'base.html' %}{% load casino %}
+{% block titulo %}Mi cuenta{% endblock %}
+{% block contenido %}
+<h3 class="mb-3">Hola, {{ jugador.persona.nombre_completo }} <small class="text-muted">({{ jugador.codigo_cliente }})</small></h3>
+<div class="row g-3 mb-4">
+  <div class="col-md-4"><div class="card card-metrica shadow-sm"><div class="card-body"><div class="text-muted">Saldo en fichas</div><div class="valor">{{ jugador.saldo_fichas|fichas }}</div></div></div></div>
+  <div class="col-md-4"><div class="card card-metrica shadow-sm"><div class="card-body"><div class="text-muted">Estado de la cuenta</div>
+    <div class="valor"><span class="badge bg-{{ jugador.estado|clase_estado }}">{{ jugador.estado }}</span></div>
+    {% if jugador.estado == 'Suspendido' %}<div class="small">{% if jugador.suspendido_hasta %}Hasta {{ jugador.suspendido_hasta|date:'Y-m-d H:i' }}{% else %}Hasta que la deuda baje del límite{% endif %}</div>{% endif %}
+  </div></div></div>
+  <div class="col-md-4"><div class="card card-metrica shadow-sm"><div class="card-body"><div class="text-muted">Pérdidas de hoy / umbral</div><div class="valor">{{ perdidas_hoy|fichas }} <small class="fs-6 text-muted">/ {{ umbral|fichas }}</small></div></div></div></div>
+</div>
+
+<div class="row g-3">
+  <div class="col-lg-8">
+    <div class="card shadow-sm"><div class="card-header d-flex justify-content-between"><strong>Últimas apuestas</strong><a href="{% url 'jugadores:mi_historial' %}">Ver historial completo</a></div>
+      <table class="table table-sm mb-0"><thead><tr><th>Fecha</th><th>Mesa</th><th>Tipo</th><th class="text-end">Monto</th><th>Estado</th><th class="text-end">Premio</th></tr></thead>
+      <tbody>{% for a in apuestas %}<tr><td>{{ a.ronda.hora_inicio|date:'m-d H:i' }}</td><td>{{ a.ronda.mesa }}</td><td>{{ a.tipo_apuesta }}</td><td class="text-end">{{ a.monto_apostado|fichas }}</td>
+        <td><span class="badge bg-{{ a.estado|clase_estado }}">{{ a.estado }}</span></td><td class="text-end">{{ a.premio|fichas }}</td></tr>
+      {% empty %}<tr><td colspan="6" class="text-muted">Aún no ha apostado.</td></tr>{% endfor %}</tbody></table>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    {% if notificaciones %}
+    <div class="card shadow-sm mb-3 border-primary"><div class="card-header"><strong><i class="bi bi-bell"></i> Notificaciones nuevas</strong></div>
+      <ul class="list-group list-group-flush">{% for n in notificaciones %}<li class="list-group-item small">{{ n.mensaje }}<div class="text-muted">{{ n.fecha|date:'Y-m-d H:i' }}</div></li>{% endfor %}</ul>
+      <div class="card-footer"><a href="{% url 'jugadores:notificaciones' %}">Ver todas</a></div>
+    </div>
+    {% endif %}
+    <div class="card shadow-sm"><div class="card-body">
+      <h6>Juego responsable</h6>
+      <p class="small text-muted">Si siente que necesita una pausa, puede autoexcluirse: no podrá apostar en ninguna mesa durante 24 horas.</p>
+      {% if jugador.estado == 'Activo' %}<a class="btn btn-warning w-100" href="{% url 'jugadores:pausa' %}">Solicitar pausa de 24 horas</a>
+      {% else %}<button class="btn btn-secondary w-100" disabled>Cuenta no activa</button>{% endif %}
+    </div></div>
+  </div>
+</div>
+{% endblock %}

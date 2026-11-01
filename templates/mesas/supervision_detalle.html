@@ -1,0 +1,35 @@
+{% extends 'base.html' %}{% load casino %}
+{% block titulo %}Supervisión{% endblock %}
+{% block contenido %}
+<h3>{{ asignacion.mesa }} · turno {{ asignacion.turno }}</h3>
+<p>Crupier: <strong>{{ asignacion.crupier.persona.nombre_completo }}</strong></p>
+<div class="row g-3">
+  <div class="col-lg-8">
+    <div class="card shadow-sm"><div class="card-header"><strong>Rondas del turno</strong></div>
+      <div class="table-responsive"><table class="table table-sm mb-0">
+        <thead><tr><th>#</th><th>Inicio</th><th>Cierre</th><th>Resultado</th><th>Apuestas</th><th class="text-end">Apostado</th><th class="text-end">Premios</th></tr></thead>
+        <tbody>
+        {% for r in rondas %}
+          <tr><td><a href="{% url 'juego:ronda_detalle' r.pk %}">{{ r.numero }}</a></td><td>{{ r.hora_inicio|time:'H:i' }}</td>
+            <td>{{ r.hora_cierre|time:'H:i'|default:'abierta' }}</td><td>{{ r.resultado|default:'—' }}</td><td>{{ r.num_apuestas }}</td>
+            <td class="text-end">{{ r.apostado|fichas }}</td><td class="text-end">{{ r.pagado|fichas }}</td></tr>
+        {% empty %}<tr><td colspan="7" class="text-muted">Sin rondas en este turno.</td></tr>{% endfor %}
+        </tbody>
+        <tfoot><tr class="fw-semibold"><td colspan="5">Total</td><td class="text-end">{{ apostado|fichas }}</td><td class="text-end">{{ pagado|fichas }}</td></tr></tfoot>
+      </table></div>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="card shadow-sm"><div class="card-body">
+      <h5>Concepto del supervisor</h5>
+      {% if asignacion.concepto_supervisor %}<p>Actual: <span class="badge bg-{{ asignacion.concepto_supervisor|clase_estado }}">{{ asignacion.concepto_supervisor }}</span></p>{% endif %}
+      {% if asignacion.turno.finalizado %}
+        <form method="post">{% csrf_token %}{% include '_campos.html' %}<button class="btn btn-primary">Registrar concepto</button></form>
+      {% else %}
+        <p class="text-muted">El concepto se emite al final del turno ({{ asignacion.turno.fin_dt|date:'Y-m-d H:i' }}).</p>
+      {% endif %}
+    </div></div>
+  </div>
+</div>
+<a class="d-inline-block mt-3" href="{% url 'mesas:supervision' %}">← Volver</a>
+{% endblock %}

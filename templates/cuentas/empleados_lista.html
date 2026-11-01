@@ -1,0 +1,31 @@
+{% extends 'base.html' %}{% load casino %}
+{% block titulo %}Empleados{% endblock %}
+{% block contenido %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h3>Gestión de empleados</h3>
+  <a class="btn btn-primary" href="{% url 'cuentas:empleado_crear' %}"><i class="bi bi-plus"></i> Nuevo empleado</a>
+</div>
+<div class="card shadow-sm"><div class="table-responsive">
+<table class="table table-hover mb-0">
+  <thead class="table-light"><tr><th>Nombre</th><th>Documento</th><th>Usuario</th><th>Cargo</th><th class="text-end">Salario</th><th>Juegos que conoce</th><th>Jugador</th><th></th></tr></thead>
+  <tbody>
+  {% for e in empleados %}
+    <tr>
+      <td>{{ e.persona.nombre_completo }}</td>
+      <td>{{ e.persona.documento }}</td>
+      <td>{{ e.persona.usuario.username|default:'—' }}{% if e.persona.usuario and not e.persona.usuario.is_active %} <span class="badge bg-secondary">inactivo</span>{% endif %}</td>
+      <td>{{ e.cargo }}</td>
+      <td class="text-end">{{ e.salario|fichas }}</td>
+      <td>{% for c in e.competencias.all %}<span class="badge bg-info text-dark me-1">{{ c.juego }}</span>{% empty %}<span class="text-muted">—</span>{% endfor %}</td>
+      <td>{% if e.persona.es_jugador %}<a href="{% url 'jugadores:historial' e.persona.jugador.pk %}">{{ e.persona.jugador.codigo_cliente }}</a> <span class="badge bg-{{ e.persona.jugador.estado|clase_estado }}">{{ e.persona.jugador.estado }}</span>
+          {% else %}<a class="small" href="{% url 'cuentas:empleado_habilitar_jugador' e.pk %}">Habilitar</a>{% endif %}</td>
+      <td class="text-end text-nowrap">
+        <a class="btn btn-sm btn-outline-secondary" href="{% url 'cuentas:empleado_editar' e.pk %}">Editar</a>
+        <a class="btn btn-sm btn-outline-danger" href="{% url 'cuentas:empleado_eliminar' e.pk %}">Eliminar</a>
+      </td>
+    </tr>
+  {% empty %}<tr><td colspan="8" class="text-muted text-center">No hay empleados.</td></tr>
+  {% endfor %}
+  </tbody>
+</table></div></div>
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends 'base.html' %}{% load casino %}
+{% block titulo %}Ganancias{% endblock %}
+{% block contenido %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h3>Gestión de ganancias</h3>
+  <form class="d-flex gap-2" method="get">
+    <select name="dias" class="form-select form-select-sm" onchange="this.form.submit()">
+      {% for d in opciones_dias %}<option value="{{ d }}" {% if d == dias %}selected{% endif %}>Últimos {{ d }} día(s)</option>{% endfor %}
+    </select>
+  </form>
+</div>
+<div class="row g-3 mb-4">
+  <div class="col-md-4"><div class="card card-metrica shadow-sm"><div class="card-body"><div class="text-muted">Retenido (apuestas perdidas)</div><div class="valor text-success">{{ total_retenido|fichas }}</div></div></div></div>
+  <div class="col-md-4"><div class="card card-metrica shadow-sm"><div class="card-body"><div class="text-muted">Premios pagados</div><div class="valor text-danger">{{ total_pagado|fichas }}</div></div></div></div>
+  <div class="col-md-4"><div class="card card-metrica shadow-sm"><div class="card-body"><div class="text-muted">Utilidad del casino</div><div class="valor">{{ utilidad|fichas }}</div></div></div></div>
+</div>
+<div class="row g-3">
+  <div class="col-lg-6">
+    <div class="card shadow-sm mb-3"><div class="card-header"><strong>Por mesa</strong></div>
+      <table class="table table-sm mb-0"><thead><tr><th>Mesa</th><th>Apuestas</th><th class="text-end">Apostado</th><th class="text-end">Retenido</th><th class="text-end">Pagado</th><th class="text-end">Utilidad</th></tr></thead>
+      <tbody>{% for f in por_mesa %}<tr><td>{{ f.ronda__mesa__id_mesa }} · {{ f.ronda__mesa__juego__tipo_juego }}</td><td>{{ f.num }}</td>
+        <td class="text-end">{{ f.apostado|fichas }}</td><td class="text-end">{{ f.retenido|fichas }}</td><td class="text-end">{{ f.pagado|fichas }}</td><td class="text-end fw-semibold">{{ f.utilidad|fichas }}</td></tr>
+      {% empty %}<tr><td colspan="6" class="text-muted">Sin datos.</td></tr>{% endfor %}</tbody></table>
+    </div>
+    <div class="card shadow-sm"><div class="card-header"><strong>Por día</strong></div>
+      <table class="table table-sm mb-0"><thead><tr><th>Día</th><th class="text-end">Retenido</th><th class="text-end">Pagado</th><th class="text-end">Utilidad</th></tr></thead>
+      <tbody>{% for f in por_dia %}<tr><td>{{ f.dia|date:'Y-m-d' }}</td><td class="text-end">{{ f.retenido|fichas }}</td><td class="text-end">{{ f.pagado|fichas }}</td><td class="text-end fw-semibold">{{ f.utilidad|fichas }}</td></tr>
+      {% empty %}<tr><td colspan="4" class="text-muted">Sin datos.</td></tr>{% endfor %}</tbody></table>
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <div class="card shadow-sm"><div class="card-header"><strong>Acumulado por jugador</strong> <span class="small text-muted">(insumo de las suspensiones)</span></div>
+      <table class="table table-sm mb-0"><thead><tr><th>Jugador</th><th class="text-end">Ganado</th><th class="text-end">Perdido</th><th class="text-end">Neto</th><th class="text-end">Saldo</th></tr></thead>
+      <tbody>{% for j in por_jugador %}<tr><td><a href="{% url 'jugadores:historial' j.pk %}">{{ j }}</a></td><td class="text-end">{{ j.ganado|fichas }}</td><td class="text-end">{{ j.perdido|fichas }}</td>
+        <td class="text-end {% if j.neto < 0 %}text-danger{% else %}text-success{% endif %}">{{ j.neto|fichas }}</td><td class="text-end">{{ j.saldo_fichas|fichas }}</td></tr>
+      {% endfor %}</tbody></table>
+    </div>
+  </div>
+</div>
+{% endblock %}

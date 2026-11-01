@@ -1,0 +1,5 @@
+Django==5.2.18
+python-dotenv==1.2.4
+tzdata==2026.6
+# Solo si se usa PostgreSQL (DB_ENGINE=postgresql en .env):
+# psycopg[binary]>=3.2

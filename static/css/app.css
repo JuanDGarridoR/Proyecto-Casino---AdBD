@@ -1,0 +1,7 @@
+body { background: #f4f6f9; }
+.navbar-brand { font-weight: 700; letter-spacing: .5px; }
+.card-metrica .valor { font-size: 1.8rem; font-weight: 700; }
+.table td, .table th { vertical-align: middle; }
+.lista-checks > div > div { display: inline-block; margin-right: 1.2rem; }
+.lista-checks label { margin-left: .3rem; }
+.zk-nota { font-size: .8rem; }

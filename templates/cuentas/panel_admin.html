@@ -1,0 +1,51 @@
+{% extends 'base.html' %}{% load casino %}
+{% block titulo %}Panel del administrador{% endblock %}
+{% block contenido %}
+<h3 class="mb-3">Panel del administrador</h3>
+<div class="row g-3 mb-4">
+  <div class="col-6 col-md-3"><div class="card card-metrica shadow-sm"><div class="card-body"><div class="text-muted">Mesas</div><div class="valor">{{ total_mesas }}</div></div></div></div>
+  <div class="col-6 col-md-3"><div class="card card-metrica shadow-sm"><div class="card-body"><div class="text-muted">Empleados</div><div class="valor">{{ total_empleados }}</div></div></div></div>
+  <div class="col-6 col-md-3"><div class="card card-metrica shadow-sm"><div class="card-body"><div class="text-muted">Jugadores</div><div class="valor">{{ total_jugadores }}</div></div></div></div>
+  <div class="col-6 col-md-3"><div class="card card-metrica shadow-sm"><div class="card-body"><div class="text-muted">Movimientos pendientes</div><div class="valor"><a href="{% url 'jugadores:movimientos' %}">{{ movimientos_pendientes }}</a></div></div></div></div>
+</div>
+
+<div class="row g-3">
+  <div class="col-lg-7">
+    <div class="card shadow-sm mb-3"><div class="card-header d-flex justify-content-between"><strong>Asignaciones de hoy</strong><a href="{% url 'mesas:turnos' %}">Gestionar turnos</a></div>
+      <div class="table-responsive"><table class="table table-sm mb-0">
+        <thead><tr><th>Turno</th><th>Mesa</th><th>Crupier</th><th>Supervisor</th><th>Concepto</th></tr></thead>
+        <tbody>
+        {% for a in asignaciones_hoy %}
+          <tr {% if a.turno.en_curso %}class="table-success"{% endif %}>
+            <td>{{ a.turno.hora_inicio|time:'H:i' }}–{{ a.turno.hora_fin|time:'H:i' }}{% if a.turno.en_curso %} <span class="badge bg-success">en curso</span>{% endif %}</td>
+            <td>{{ a.mesa }}</td><td>{{ a.crupier.persona.nombre_completo }}</td><td>{{ a.supervisor.persona.nombre_completo }}</td>
+            <td>{% if a.concepto_supervisor %}<span class="badge bg-{{ a.concepto_supervisor|clase_estado }}">{{ a.concepto_supervisor }}</span>{% else %}—{% endif %}</td>
+          </tr>
+        {% empty %}<tr><td colspan="5" class="text-muted">No hay asignaciones para hoy.</td></tr>{% endfor %}
+        </tbody></table></div>
+    </div>
+    <div class="card shadow-sm"><div class="card-header"><strong>Rondas abiertas</strong></div>
+      <ul class="list-group list-group-flush">
+        {% for r in rondas_abiertas %}<li class="list-group-item"><a href="{% url 'juego:ronda_detalle' r.pk %}">{{ r }}</a> · abierta desde {{ r.hora_inicio|time:'H:i' }}</li>
+        {% empty %}<li class="list-group-item text-muted">Ninguna.</li>{% endfor %}
+      </ul>
+    </div>
+  </div>
+  <div class="col-lg-5">
+    <div class="card shadow-sm mb-3 border-warning"><div class="card-header bg-warning-subtle"><strong>Jugadores suspendidos</strong></div>
+      <ul class="list-group list-group-flush">
+        {% for j in suspendidos %}<li class="list-group-item"><a href="{% url 'jugadores:historial' j.pk %}">{{ j }}</a>
+          <span class="small text-muted">{% if j.suspendido_hasta %}hasta {{ j.suspendido_hasta|date:'Y-m-d H:i' }}{% else %}sin plazo (deuda de empleado){% endif %}</span></li>
+        {% empty %}<li class="list-group-item text-muted">Ninguno.</li>{% endfor %}
+      </ul>
+    </div>
+    <div class="card shadow-sm border-danger"><div class="card-header bg-danger-subtle"><strong>En investigación</strong></div>
+      <ul class="list-group list-group-flush">
+        {% for j in investigacion %}<li class="list-group-item d-flex justify-content-between"><a href="{% url 'jugadores:historial' j.pk %}">{{ j }}</a>
+          <a class="btn btn-sm btn-outline-danger" href="{% url 'jugadores:cerrar_investigacion' j.pk %}">Cerrar</a></li>
+        {% empty %}<li class="list-group-item text-muted">Ninguno.</li>{% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends 'base.html' %}{% load casino %}
+{% block titulo %}Turno {{ turno }}{% endblock %}
+{% block contenido %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h3>Turno {{ turno }} {% if turno.en_curso %}<span class="badge bg-success">en curso</span>{% elif turno.finalizado %}<span class="badge bg-secondary">finalizado</span>{% endif %}</h3>
+  <a class="btn btn-primary" href="{% url 'mesas:asignacion_crear' %}?turno={{ turno.pk }}"><i class="bi bi-plus"></i> Asignar mesa</a>
+</div>
+<p class="text-muted">Reglas validadas: el crupier y el supervisor deben conocer el juego (RN-15); un crupier atiende una sola mesa por turno (RN-07) y no repite mesa en la jornada (RN-09).</p>
+<div class="card shadow-sm mb-3"><table class="table mb-0">
+  <thead class="table-light"><tr><th>Mesa</th><th>Crupier</th><th>Supervisor</th><th>Concepto del supervisor</th><th></th></tr></thead>
+  <tbody>
+  {% for a in asignaciones %}
+    <tr>
+      <td>{{ a.mesa }}</td><td>{{ a.crupier.persona.nombre_completo }}</td><td>{{ a.supervisor.persona.nombre_completo }}</td>
+      <td>{% if a.concepto_supervisor %}<span class="badge bg-{{ a.concepto_supervisor|clase_estado }}">{{ a.concepto_supervisor }}</span>{% else %}<span class="text-muted">Pendiente</span>{% endif %}</td>
+      <td class="text-end text-nowrap">
+        <a class="btn btn-sm btn-outline-secondary" href="{% url 'mesas:asignacion_editar' a.pk %}">Editar</a>
+        <a class="btn btn-sm btn-outline-danger" href="{% url 'mesas:asignacion_eliminar' a.pk %}">Eliminar</a>
+      </td>
+    </tr>
+  {% empty %}<tr><td colspan="5" class="text-muted text-center">Este turno no tiene asignaciones.</td></tr>{% endfor %}
+  </tbody>
+</table></div>
+{% if sin_asignar %}
+<div class="alert alert-light border">Mesas sin asignación en este turno:
+  {% for m in sin_asignar %}<a class="btn btn-sm btn-outline-primary ms-1" href="{% url 'mesas:asignacion_crear' %}?turno={{ turno.pk }}&mesa={{ m.pk }}">{{ m }}</a>{% endfor %}
+</div>
+{% endif %}
+<a href="{% url 'mesas:turnos' %}">← Volver a turnos</a>
+{% endblock %}

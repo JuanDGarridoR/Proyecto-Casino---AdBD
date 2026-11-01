@@ -1,0 +1,29 @@
+{% extends 'base.html' %}{% load casino %}
+{% block titulo %}Mesas{% endblock %}
+{% block contenido %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h3>Gestión de mesas</h3>
+  <a class="btn btn-primary" href="{% url 'mesas:mesa_crear' %}"><i class="bi bi-plus"></i> Nueva mesa</a>
+</div>
+<div class="card shadow-sm"><div class="table-responsive"><table class="table table-hover mb-0">
+  <thead class="table-light"><tr><th>Id</th><th>Juego</th><th class="text-end">Mínimo</th><th class="text-end">Máximo</th><th>Turno actual</th><th>Rondas</th><th></th></tr></thead>
+  <tbody>
+  {% for mesa, vigente in filas %}
+    <tr>
+      <td>{{ mesa.id_mesa }}</td>
+      <td>{{ mesa.juego }}</td>
+      <td class="text-end">{{ mesa.monto_minimo|fichas }}</td>
+      <td class="text-end">{{ mesa.monto_maximo|fichas }}</td>
+      <td>{% if vigente %}<i class="bi bi-person-badge"></i> {{ vigente.crupier.persona.nombre_completo }} · <i class="bi bi-eye"></i> {{ vigente.supervisor.persona.nombre_completo }}
+          <div class="small text-muted">{{ vigente.turno }}</div>{% else %}<span class="text-muted">Sin asignación</span>{% endif %}</td>
+      <td>{{ mesa.num_rondas }}{% if mesa.abiertas %} <span class="badge bg-success">1 abierta</span>{% endif %}</td>
+      <td class="text-end text-nowrap">
+        <a class="btn btn-sm btn-outline-secondary" href="{% url 'mesas:mesa_editar' mesa.pk %}">Editar</a>
+        <a class="btn btn-sm btn-outline-danger" href="{% url 'mesas:mesa_eliminar' mesa.pk %}">Eliminar</a>
+      </td>
+    </tr>
+  {% empty %}<tr><td colspan="7" class="text-muted text-center">No hay mesas.</td></tr>{% endfor %}
+  </tbody>
+</table></div></div>
+<p class="text-muted small mt-2">Las asignaciones de crupier y supervisor por turno se gestionan desde <a href="{% url 'mesas:turnos' %}">Turnos</a>.</p>
+{% endblock %}

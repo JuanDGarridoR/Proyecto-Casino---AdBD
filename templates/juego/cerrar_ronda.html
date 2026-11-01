@@ -1,0 +1,41 @@
+{% extends 'base.html' %}{% load casino %}
+{% block titulo %}Cerrar ronda{% endblock %}
+{% block contenido %}
+<h3>Cerrar ronda #{{ ronda.numero }} · {{ ronda.mesa }}</h3>
+<p class="text-muted">Al ingresar el resultado, el sistema procesa automáticamente cada apuesta: si coincide con el resultado queda <strong>Ganada</strong> y se acredita monto × factor más la devolución del monto apostado; si no, queda <strong>Perdida</strong> y el monto queda a favor del casino.</p>
+<form method="post" novalidate>{% csrf_token %}
+  <div class="card shadow-sm mb-3"><div class="card-body">
+    {% include '_campos.html' %}
+  </div></div>
+
+  {% if sin_detalle %}
+  <div class="card shadow-sm mb-3"><div class="card-header"><strong>Apuestas evidenciadas al destapar las cartas (RN-24)</strong></div>
+    <div class="card-body">
+      {{ formset.management_form }}
+      {% for e in formset.non_form_errors %}<div class="alert alert-danger">{{ e }}</div>{% endfor %}
+      <table class="table table-sm">
+        <thead><tr><th>Jugador</th><th>Tipo de apuesta</th><th>Monto</th><th>Factor</th></tr></thead>
+        <tbody>
+        {% for f in formset %}
+          {% if f.non_field_errors %}<tr><td colspan="4" class="text-danger small">{{ f.non_field_errors|join:' ' }}</td></tr>{% endif %}
+          <tr><td>{{ f.jugador }}</td><td>{{ f.tipo_apuesta }}</td><td>{{ f.monto_apostado }}</td><td>{{ f.factor_pago }}</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+      <p class="small text-muted mb-0">Sugerencia para póker: use como tipo "Mano &lt;código del jugador&gt;" y escriba en el resultado la mano ganadora (ej. "Mano J-0001").</p>
+    </div>
+  </div>
+  {% else %}
+  <div class="card shadow-sm mb-3"><div class="card-header"><strong>Apuestas de la ronda</strong></div>
+    <table class="table table-sm mb-0">
+      <thead><tr><th>Jugador</th><th>Tipo</th><th class="text-end">Monto</th><th>Factor</th></tr></thead>
+      <tbody>{% for a in apuestas %}<tr><td>{{ a.jugador }}</td><td>{{ a.tipo_apuesta }}</td><td class="text-end">{{ a.monto_apostado|fichas }}</td><td>{{ a.factor_pago|factor }}</td></tr>
+      {% empty %}<tr><td colspan="4" class="text-muted">Sin apuestas.</td></tr>{% endfor %}</tbody>
+    </table>
+  </div>
+  {% endif %}
+  <button class="btn btn-dark"><i class="bi bi-flag"></i> Cerrar ronda y procesar apuestas</button>
+  <a class="btn btn-link" href="{% url 'juego:panel_mesa' ronda.mesa_id %}">Cancelar</a>
+</form>
+{% include '_sugerencias.html' %}
+{% endblock %}

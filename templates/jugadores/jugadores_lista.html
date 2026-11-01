@@ -1,0 +1,26 @@
+{% extends 'base.html' %}{% load casino %}
+{% block titulo %}Jugadores{% endblock %}
+{% block contenido %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h3>Jugadores</h3>
+  <div class="btn-group">
+    <a class="btn btn-sm btn-outline-secondary {% if not estado %}active{% endif %}" href="?">Todos</a>
+    {% for e in estados %}<a class="btn btn-sm btn-outline-secondary {% if e == estado %}active{% endif %}" href="?estado={{ e }}">{{ e }}</a>{% endfor %}
+  </div>
+</div>
+<div class="card shadow-sm"><div class="table-responsive"><table class="table table-hover mb-0">
+  <thead class="table-light"><tr><th>Código</th><th>Nombre</th><th>Documento</th><th>Edad</th><th class="text-end">Saldo</th><th>Estado</th><th>Empleado</th><th></th></tr></thead>
+  <tbody>
+  {% for j in jugadores %}
+    <tr>
+      <td>{{ j.codigo_cliente }}</td><td>{{ j.persona.nombre_completo }}</td><td>{{ j.persona.documento }}</td><td>{{ j.edad }}</td>
+      <td class="text-end">{{ j.saldo_fichas|fichas }}</td>
+      <td><span class="badge bg-{{ j.estado|clase_estado }}">{{ j.estado }}</span>{% if j.suspendido_hasta %}<div class="small text-muted">hasta {{ j.suspendido_hasta|date:'m-d H:i' }}</div>{% endif %}</td>
+      <td>{% if j.persona.es_empleado %}{{ j.persona.empleado.cargo }}{% else %}—{% endif %}</td>
+      <td class="text-end text-nowrap"><a class="btn btn-sm btn-outline-primary" href="{% url 'jugadores:historial' j.pk %}">Historial</a>
+        {% if j.estado == 'Investigación' %}<a class="btn btn-sm btn-danger" href="{% url 'jugadores:cerrar_investigacion' j.pk %}">Cerrar investigación</a>{% endif %}</td>
+    </tr>
+  {% empty %}<tr><td colspan="8" class="text-muted text-center">No hay jugadores.</td></tr>{% endfor %}
+  </tbody>
+</table></div></div>
+{% endblock %}

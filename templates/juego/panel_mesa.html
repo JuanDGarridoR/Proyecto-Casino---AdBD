@@ -1,0 +1,63 @@
+{% extends 'base.html' %}{% load casino %}
+{% block titulo %}{{ mesa }}{% endblock %}
+{% block contenido %}
+<div class="d-flex justify-content-between align-items-center mb-2">
+  <h3>{{ mesa }}</h3>
+  <span class="text-muted">Apuesta mínima {{ mesa.monto_minimo|fichas }} · máxima {{ mesa.monto_maximo|fichas }}</span>
+</div>
+<p class="mb-3">
+  {% if asignacion %}Turno {{ asignacion.turno }} · Crupier <strong>{{ asignacion.crupier.persona.nombre_completo }}</strong> · Supervisor {{ asignacion.supervisor.persona.nombre_completo }}{% else %}<span class="text-danger">La mesa no tiene asignación en el turno actual.</span>{% endif %}
+  {% if not mesa.juego.registro_detallado %}<br><span class="badge bg-secondary">{{ mesa.juego }}: sin registro detallado — las apuestas se registran al cerrar la ronda, cuando se evidencia el resultado (RN-24).</span>{% endif %}
+</p>
+{% if not es_mi_turno %}<div class="alert alert-warning">Modo consulta: solo el crupier asignado a esta mesa en el turno actual puede operarla.</div>{% endif %}
+
+{% if ronda %}
+<div class="card shadow-sm mb-4 border-success">
+  <div class="card-header bg-success-subtle d-flex justify-content-between align-items-center">
+    <strong>Ronda #{{ ronda.numero }} abierta desde {{ ronda.hora_inicio|time:'H:i:s' }}</strong>
+    {% if es_mi_turno %}<div>
+      <a class="btn btn-sm btn-dark" href="{% url 'juego:cerrar_ronda' ronda.pk %}"><i class="bi bi-flag"></i> Ingresar resultado y cerrar</a>
+      {% if not apuestas %}<form method="post" action="{% url 'juego:ronda_eliminar' ronda.pk %}" class="d-inline">{% csrf_token %}<button class="btn btn-sm btn-outline-danger">Eliminar ronda</button></form>{% endif %}
+    </div>{% endif %}
+  </div>
+  <div class="card-body">
+    {% if es_mi_turno and mesa.juego.registro_detallado %}
+    <form method="post" action="{% url 'juego:registrar_apuesta' ronda.pk %}" class="row g-2 align-items-end mb-3">{% csrf_token %}
+      <div class="col-md-4"><label class="form-label small">Jugador</label>{{ form_apuesta.jugador }}</div>
+      <div class="col-md-3"><label class="form-label small">Tipo de apuesta</label>{{ form_apuesta.tipo_apuesta }}</div>
+      <div class="col-md-2"><label class="form-label small">Monto</label>{{ form_apuesta.monto_apostado }}</div>
+      <div class="col-md-1"><label class="form-label small">Factor</label>{{ form_apuesta.factor_pago }}</div>
+      <div class="col-md-2"><button class="btn btn-primary w-100">Registrar</button></div>
+    </form>
+    {% include '_sugerencias.html' %}
+    {% endif %}
+    <table class="table table-sm mb-0">
+      <thead><tr><th>Jugador</th><th>Tipo</th><th class="text-end">Monto</th><th>Factor</th><th>Estado</th><th></th></tr></thead>
+      <tbody>
+      {% for a in apuestas %}
+        <tr><td>{{ a.jugador }}</td><td>{{ a.tipo_apuesta }}</td><td class="text-end">{{ a.monto_apostado|fichas }}</td><td>{{ a.factor_pago|factor }}</td>
+          <td><span class="badge bg-{{ a.estado|clase_estado }}">{{ a.estado }}</span></td>
+          <td class="text-end text-nowrap">{% if es_mi_turno %}<a class="btn btn-sm btn-outline-secondary" href="{% url 'juego:apuesta_editar' a.pk %}">Modificar</a>
+            <a class="btn btn-sm btn-outline-danger" href="{% url 'juego:apuesta_anular' a.pk %}">Anular</a>{% endif %}</td></tr>
+      {% empty %}<tr><td colspan="6" class="text-muted">Aún no hay apuestas en esta ronda.</td></tr>{% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% elif es_mi_turno %}
+<form method="post" action="{% url 'juego:abrir_ronda' mesa.pk %}" class="mb-4">{% csrf_token %}
+  <button class="btn btn-lg btn-success"><i class="bi bi-play-fill"></i> Abrir nueva ronda</button>
+</form>
+{% endif %}
+
+<h5>Rondas cerradas recientes</h5>
+<div class="card shadow-sm"><table class="table table-sm mb-0">
+  <thead class="table-light"><tr><th>#</th><th>Inicio</th><th>Cierre</th><th>Resultado</th><th>Apuestas</th><th class="text-end">Apostado</th><th class="text-end">Premios pagados</th></tr></thead>
+  <tbody>
+  {% for r in historial %}
+    <tr><td><a href="{% url 'juego:ronda_detalle' r.pk %}">{{ r.numero }}</a></td><td>{{ r.hora_inicio|date:'m-d H:i' }}</td><td>{{ r.hora_cierre|date:'m-d H:i' }}</td>
+      <td>{{ r.resultado }}</td><td>{{ r.num_apuestas }}</td><td class="text-end">{{ r.apostado|fichas }}</td><td class="text-end">{{ r.pagado|fichas }}</td></tr>
+  {% empty %}<tr><td colspan="7" class="text-muted">Sin rondas cerradas.</td></tr>{% endfor %}
+  </tbody>
+</table></div>
+{% endblock %}
