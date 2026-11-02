@@ -20,6 +20,8 @@ Sigue el patrón **MTV (Model–Template–View)**:
 
 Un proyecto Django se compone de **apps** reutilizables. Cada una agrupa sus modelos, vistas, URLs, formularios, migraciones y pruebas.
 
+> **PENDIENTE:** Agregar las versiones y el stack: Python 3.12+, Django 5.2.18, python-dotenv, SQLite (desarrollo) o PostgreSQL con psycopg 3 (opcional), Bootstrap por CDN. Agregar un párrafo breve sobre por qué Django (o cómo se asignó) y un poco de contexto del framework: origen, licencia y comunidad.
+
 ## 2. Arquitectura utilizada
 
 ```
@@ -44,7 +46,13 @@ Navegador ──(HTML + zk.js)──► urls.py ──► views.py ──► ser
 - **Seguridad por rol en el servidor.** Cada vista lleva `@rol_requerido(...)`. Ocultar opciones del menú es solo una ayuda visual.
 - **Migraciones** como única forma de crear el esquema. Los grupos de roles y el umbral inicial se crean en migraciones de datos.
 
+> **PENDIENTE:** Agregar el árbol de carpetas del proyecto (casino/, cuentas/, mesas/, juego/, jugadores/, templates/, static/) y un mapa de URLs por rol: qué pantallas ve cada rol y en qué ruta.
+
 ## 3. Modelo de datos
+
+> **PENDIENTE:** Insertar el diagrama entidad-relación (imagen exportada del DBML o diagrama Mermaid), con todas las tablas: las del modelo base y las agregadas.
+
+> **PENDIENTE:** Agregar un diccionario de datos: por cada tabla, sus columnas, tipo, nulo/no nulo, PK, FK (a qué tabla apunta) y una descripción. Indicar también la cardinalidad de cada relación (persona 1–0..1 jugador, mesa 1–N ronda, ronda 1–N apuesta, etc.).
 
 ### 3.1 Tablas del modelo base (sin cambios de columnas)
 
@@ -64,6 +72,7 @@ Las tablas `auth_group`, `django_session`, etc. son propias del framework.
 
 ### 3.3 Diferencias entre el modelo lógico y el físico
 - **PK compuestas** de `competencia` y `asignacion_mesa`: Django crea un `id` autoincremental y la PK lógica se garantiza con `UniqueConstraint` (`competencia_pk`, `asignacion_mesa_pk`). Así el admin, los formularios y `ModelForm` funcionan sin fricción.
+  > **PENDIENTE:** Explicar por qué no se usó `CompositePrimaryKey`, que Django 5.2 ya trae: el admin, `ModelForm` y las FK hacia una tabla con PK compuesta todavía no lo soportan bien.
 - `usuario` tiene además las columnas `password` (inutilizable), `last_login`, `is_superuser` e `is_staff`, que exige `AbstractBaseUser`/`PermissionsMixin`.
 
 ### 3.4 Constraints declarados en la BD
@@ -131,6 +140,9 @@ Así ni la contraseña ni `H` viajan durante el login, y una `R` capturada no se
 **Comparación del resultado:** el crupier escribe el resultado como texto, con varias opciones ganadoras separadas por comas (ej. "Asiento 1, Asiento 3"). Una apuesta gana si su tipo, normalizado (minúsculas, sin tildes), está en ese conjunto. En la ruleta basta con escribir el número: el sistema deduce pleno, color, paridad, falta/pasa y docena. El formulario sugiere tipos de apuesta con su pago habitual.
 
 ### 4.4 Funcionalidades adicionales (las 4) + interfaz por rol
+
+> **PENDIENTE:** Aclarar que la lista tiene 5 puntos porque el 5 (interfaz por rol) es obligatorio y no cuenta entre las 4 adicionales.
+
 1. **Notificaciones:** se generan en cada cambio de estado (Suspendido, Investigación, reactivación) y al aprobar o rechazar movimientos. Un contador aparece en el menú.
 2. **Gestión de empleados:** alta con usuario ZK, cargo, salario y juegos que conoce; edición, desactivación, eliminación (solo sin asignaciones) y habilitación como jugador (RN-28).
 3. **Historial de clientes:** apuestas, consignaciones y retiros, cambios de estado y, para empleados, sus indicadores de deuda y ganancias.
@@ -151,6 +163,46 @@ Así ni la contraseña ni `H` viajan durante el login, y una `R` capturada no se
 ## 5. Datos de prueba y evidencia
 - `python manage.py seed [--reset]` crea 1 administrador, 2 supervisores, 4 crupieres con competencias distintas (3 de ellos también juegan), 3 juegos (Ruleta y Blackjack detallados, Póker sin registro detallado), 4 mesas, turnos de ayer y de hoy con rotación de crupieres, historial de rondas y jugadores en todos los estados. Todo pasa por las validaciones del sistema. También intenta registrar a un menor de edad y muestra el rechazo.
 - `python manage.py test`: 36 pruebas automatizadas (login ZK, accesos por rol, reglas de negocio).
+
+> **PENDIENTE — Instalación y ejecución:** Agregar los pasos: crear venv, `pip install -r requirements.txt`, copiar `.env.example` a `.env`, `python manage.py migrate`, `python manage.py seed`, `python manage.py runserver`. Agregar la configuración opcional de PostgreSQL (`DB_ENGINE=postgresql` y las variables `DB_*`). Están en el README.
+
+> **PENDIENTE — Usuarios de prueba:** Agregar la tabla de usuarios del README (usuario, rol y situación en los datos de prueba) e indicar la contraseña común `Casino123*`: admin, sup1, sup2, crup1 a crup4, jugador1 a jugador4.
+
+> **PENDIENTE — Detalle de los datos sembrados:** Listar los juegos (Ruleta, Blackjack, Póker y si tienen registro detallado), las 4 mesas con su juego y montos mínimo y máximo, los turnos de ayer y de hoy con sus asignaciones, el umbral de pérdida diaria (1.000.000) y el estado inicial de cada jugador.
+
+> **PENDIENTE — Detalle de las pruebas automatizadas:** Agregar una tabla por app (cuentas: 10, juego: 10, jugadores: 8, mesas: 8) con lo que cubre cada grupo y las RN que verifica (RN-03, 07, 09, 10, 12, 15, 20–27, 29, 30, consignaciones y retiros).
+
+> **PENDIENTE — Guion de demostración:** Agregar los 6 pasos del README (jugador2 → crup2 apuesta y cierre → jugador3 suspendido → crup3 póker y cambio de rol → sup1 concepto → admin asignación inválida, caja, investigación, ganancias y umbral), con el resultado esperado de cada paso.
+
+### 5.1 Capturas de pantalla
+
+> **PENDIENTE — Captura:** Pantalla de login.
+
+> **PENDIENTE — Captura:** DevTools → Network en el login, donde se ve que solo se envía `R` (ni la contraseña ni `H`).
+
+> **PENDIENTE — Captura:** Panel de cada rol (Administrador, Supervisor, Crupier, Jugador) y el selector "Rol: …" de una persona con dos roles.
+
+> **PENDIENTE — Captura:** Apuesta rechazada por superar el monto máximo de la mesa (RN-20).
+
+> **PENDIENTE — Captura:** Apuesta rechazada a un jugador suspendido (jugador3).
+
+> **PENDIENTE — Captura:** Cierre de ronda con el resultado y las apuestas marcadas Ganada/Perdida con su premio.
+
+> **PENDIENTE — Captura:** jugador2 suspendido 24 h por superar el umbral, con su notificación (RN-25).
+
+> **PENDIENTE — Captura:** Asignación rechazada por RN-09 o RN-15.
+
+> **PENDIENTE — Captura:** Concepto emitido por el supervisor (RN-12).
+
+> **PENDIENTE — Captura:** Caja: aprobar o rechazar una consignación o un retiro.
+
+> **PENDIENTE — Captura:** Historial de un cliente y cierre de investigación (RN-30).
+
+> **PENDIENTE — Captura:** Reporte de ganancias.
+
+> **PENDIENTE — Captura:** Salida de `python manage.py seed`, con el rechazo del menor de edad.
+
+> **PENDIENTE — Captura:** Salida de `python manage.py test` con las 36 pruebas en OK.
 
 ## 6. Dificultades encontradas
 1. **SHA-256 frente al hasher de Django.** El hasher por defecto (PBKDF2) y `check_password` no cumplen el requisito. Hubo que escribir un modelo de usuario propio (`AUTH_USER_MODEL`, definido **antes** de la primera migración) y un backend de autenticación. Además, el login del admin de Django usa `check_password`, así que se redirigió `/admin/login/` al login propio.
@@ -175,3 +227,7 @@ Así ni la contraseña ni `H` viajan durante el login, y una `R` capturada no se
 - Django permitió cubrir los 6 casos de uso y las 4 funcionalidades adicionales con poco código repetitivo, gracias al ORM, `ModelForm`, las sesiones y el admin.
 - Concentrar las reglas en `services.py` con transacciones y reforzarlas con constraints en la BD dio una solución coherente y fácil de probar.
 - **Recomendaciones:** definir el modelo de usuario propio desde el día 1. Usar PostgreSQL en producción, para que `select_for_update` bloquee de verdad. Reemplazar SHA-256 simple por un KDF lento o por SRP/OPAQUE si el sistema fuera real. Agregar un trigger en la BD para RN-09 si se quiere garantizar la regla también fuera de la aplicación.
+
+## Anexo A. Reglas de negocio
+
+> **PENDIENTE:** Agregar la lista completa de reglas RN-01 a RN-30 (están en `docs/02-contexto-casino.md`), con una tabla de tres columnas: regla, descripción y dónde se implementa (constraint, `clean()`, servicio o vista). El documento hoy no menciona RN-01, 02, 04, 06, 08, 11, 13, 14, 17, 18, 19, 23 y 27, aunque están implementadas.

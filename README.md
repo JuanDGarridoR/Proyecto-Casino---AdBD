@@ -1,4 +1,4 @@
-# Casino — Proyecto Framework (Django)
+# Proyecto Casino - Django
 
 Aplicación web para la gestión de un casino de apuestas y mesas de juego.
 Bases de Datos: Administración y Aplicaciones — Pontificia Universidad Javeriana.
