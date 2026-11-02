@@ -4,4 +4,3 @@ body { background: #f4f6f9; }
 .table td, .table th { vertical-align: middle; }
 .lista-checks > div > div { display: inline-block; margin-right: 1.2rem; }
 .lista-checks label { margin-left: .3rem; }
-.zk-nota { font-size: .8rem; }

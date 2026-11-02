@@ -35,14 +35,14 @@ class ApuestasTests(TestCase):
 
     def test_monto_fuera_de_limites(self):
         for monto in (99, 1001):
-            with self.subTest(monto=monto), self.assertRaisesMessage(ValidationError, 'RN-20'):
+            with self.subTest(monto=monto), self.assertRaisesMessage(ValidationError, 'El monto debe estar entre'):
                 self.apostar(monto=monto)
         self.apostar(monto=100)
         self.apostar(monto=1000)
 
     def test_saldo_insuficiente(self):
         pobre = self.e.nuevo_jugador('pobre', 'J-2', 150)
-        with self.assertRaisesMessage(ValidationError, 'RN-21'):
+        with self.assertRaisesMessage(ValidationError, 'Saldo insuficiente'):
             self.apostar(monto=200, jugador=pobre)
 
     def test_monto_se_descuenta_al_apostar(self):
@@ -80,7 +80,7 @@ class ApuestasTests(TestCase):
 
     def test_juego_sin_registro_detallado(self):
         ronda = services.abrir_ronda(self.e.mesa_poker, self.e.crupier2)
-        with self.assertRaisesMessage(ValidationError, 'RN-24'):
+        with self.assertRaisesMessage(ValidationError, 'no permite registro detallado'):
             services.registrar_apuesta(ronda, self.e.jugador, 'Mano J-1', D(500), D(1), self.e.crupier2)
         otro = self.e.nuevo_jugador('otro', 'J-3', 5000)
         services.cerrar_ronda(ronda, 'Mano J-1', self.e.crupier2, [

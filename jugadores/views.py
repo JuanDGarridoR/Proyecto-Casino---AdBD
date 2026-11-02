@@ -152,7 +152,7 @@ def cerrar_investigacion(request, pk):
     return render(request, 'form.html', {
         'titulo': f'Cerrar investigación de {jugador}', 'form': form, 'volver': 'jugadores:lista',
         'ayuda': 'Al cerrar la investigación el empleado vuelve a estar Activo y sus ganancias se cuentan '
-                 'de nuevo desde cero (RN-30).',
+                 'de nuevo desde cero.',
     })
 
 

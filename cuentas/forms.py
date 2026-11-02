@@ -34,7 +34,7 @@ class HashZeroKnowledgeMixin(forms.Form):
     def clean_password_hash(self):
         valor = self.cleaned_data['password_hash'].lower()
         if not re.fullmatch(r'[0-9a-f]{64}', valor):
-            raise forms.ValidationError('No se recibió un hash SHA-256 válido. ¿Tiene JavaScript habilitado?')
+            raise forms.ValidationError('No se pudo procesar la contraseña. ¿Tiene JavaScript habilitado?')
         return valor
 
 

@@ -7,7 +7,7 @@
 </div>
 <p class="mb-3">
   {% if asignacion %}Turno {{ asignacion.turno }} · Crupier <strong>{{ asignacion.crupier.persona.nombre_completo }}</strong> · Supervisor {{ asignacion.supervisor.persona.nombre_completo }}{% else %}<span class="text-danger">La mesa no tiene asignación en el turno actual.</span>{% endif %}
-  {% if not mesa.juego.registro_detallado %}<br><span class="badge bg-secondary">{{ mesa.juego }}: sin registro detallado — las apuestas se registran al cerrar la ronda, cuando se evidencia el resultado (RN-24).</span>{% endif %}
+  {% if not mesa.juego.registro_detallado %}<br><span class="badge bg-secondary">{{ mesa.juego }}: sin registro detallado — las apuestas se registran al cerrar la ronda, cuando se evidencia el resultado.</span>{% endif %}
 </p>
 {% if not es_mi_turno %}<div class="alert alert-warning">Modo consulta: solo el crupier asignado a esta mesa en el turno actual puede operarla.</div>{% endif %}
 

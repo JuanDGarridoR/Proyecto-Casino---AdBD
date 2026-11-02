@@ -12,7 +12,7 @@ class Juego(models.Model):
     id_juego = models.AutoField(primary_key=True)
     tipo_juego = models.CharField(max_length=50, unique=True)
     registro_detallado = models.BooleanField(
-        help_text='Si está activo, las apuestas se registran antes del resultado (RN-24).',
+        help_text='Si está activo, las apuestas se registran antes del resultado.',
     )
 
     class Meta:
@@ -110,7 +110,7 @@ class Turno(models.Model):
         if self.hora_fin <= self.hora_inicio:
             raise ValidationError('La hora de fin debe ser posterior a la de inicio (el turno no cruza medianoche).')
         if self.duracion > self.DURACION_MAXIMA:
-            raise ValidationError('Un turno no puede durar más de 2 horas (RN-10).')
+            raise ValidationError('Un turno no puede durar más de 2 horas.')
         solapados = Turno.objects.filter(
             fecha=self.fecha, hora_inicio__lt=self.hora_fin, hora_fin__gt=self.hora_inicio,
         ).exclude(pk=self.pk)
@@ -148,7 +148,7 @@ class AsignacionMesa(models.Model):
             ),
             models.UniqueConstraint(
                 fields=['crupier', 'turno'], name='asignacion_crupier_turno_unico',
-                violation_error_message='El crupier ya atiende otra mesa en ese turno (RN-07).',
+                violation_error_message='El crupier ya atiende otra mesa en ese turno.',
             ),
             models.CheckConstraint(
                 condition=~Q(crupier=F('supervisor')), name='asignacion_crupier_distinto_supervisor',
@@ -173,9 +173,9 @@ class AsignacionMesa(models.Model):
             juego = self.mesa.juego
             # RN-15: solo personal que conoce el juego de la mesa
             if self.crupier_id and 'crupier' not in errores and not self.crupier.conoce(juego):
-                errores['crupier'] = f'El crupier no conoce el juego {juego} (RN-15).'
+                errores['crupier'] = f'El crupier no conoce el juego {juego}.'
             if self.supervisor_id and 'supervisor' not in errores and not self.supervisor.conoce(juego):
-                errores['supervisor'] = f'El supervisor no conoce el juego {juego} (RN-15).'
+                errores['supervisor'] = f'El supervisor no conoce el juego {juego}.'
             # RN-09: un crupier no repite mesa en la misma jornada
             if self.crupier_id and self.turno_id and 'crupier' not in errores:
                 repetida = AsignacionMesa.objects.filter(
@@ -184,7 +184,7 @@ class AsignacionMesa(models.Model):
                 if repetida.exists():
                     errores['crupier'] = (
                         f'El crupier ya atendió esta mesa el {self.turno.fecha:%Y-%m-%d} '
-                        f'(turno {repetida.first().turno}); no puede repetir mesa en la jornada (RN-09).'
+                        f'(turno {repetida.first().turno}); no puede repetir mesa en la jornada.'
                     )
         if errores:
             raise ValidationError(errores)

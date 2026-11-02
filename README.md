@@ -71,7 +71,6 @@ juego/        Ronda, Apuesta, procesamiento de resultados, reporte de ganancias
 jugadores/    Jugador, Movimiento, Configuracion, HistorialEstado, Notificacion, suspensiones
 templates/    plantillas por app + base.html con menú por rol
 static/js/zk.js   hash SHA-256 en el navegador (desafío–respuesta)
-docs/documento-tecnico.md
 ```
 
 La lógica de negocio está en `services.py` de cada app; las vistas solo orquestan.

@@ -19,7 +19,7 @@ class MovimientoAdminForm(SolicitudMovimientoForm):
 class UmbralForm(EstiloBootstrapMixin, forms.Form):
     umbral = forms.DecimalField(label='Umbral diario de pérdidas (fichas)', max_digits=12, decimal_places=2,
                                 min_value=1, help_text='Si un jugador pierde más que este valor en un día, '
-                                                       'su cuenta se suspende 24 horas (RN-25).')
+                                                       'su cuenta se suspende 24 horas.')
 
 
 class ObservacionForm(EstiloBootstrapMixin, forms.Form):

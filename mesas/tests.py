@@ -20,7 +20,7 @@ class AsignacionesTests(TestCase):
         return AsignacionMesa(turno=turno, mesa=mesa, crupier=crupier, supervisor=supervisor or self.e.supervisor)
 
     def test_turno_mayor_a_dos_horas_rechazado(self):
-        with self.assertRaisesMessage(ValidationError, 'RN-10'):
+        with self.assertRaisesMessage(ValidationError, 'no puede durar más de 2 horas'):
             Turno(fecha=self.fecha.replace(year=2030), hora_inicio=time(8), hora_fin=time(10, 30)).full_clean()
 
     def test_turnos_solapados_rechazados(self):
@@ -35,19 +35,19 @@ class AsignacionesTests(TestCase):
 
     def test_crupier_debe_conocer_el_juego(self):
         otro_turno = Turno.objects.create(fecha=self.fecha.replace(year=2030), hora_inicio=time(8), hora_fin=time(10))
-        with self.assertRaisesMessage(ValidationError, 'RN-15'):
+        with self.assertRaisesMessage(ValidationError, 'no conoce el juego'):
             self.asignacion(otro_turno, self.mesa_bj, self.e.crupier).full_clean()
 
     def test_crupier_una_mesa_por_turno(self):
         otra_ruleta = Mesa.objects.create(juego=self.e.ruleta, monto_minimo=10, monto_maximo=100)
-        with self.assertRaisesMessage(ValidationError, 'RN-07'):
+        with self.assertRaisesMessage(ValidationError, 'ya atiende otra mesa en ese turno'):
             self.asignacion(self.e.turno, otra_ruleta, self.e.crupier).full_clean()
 
     def test_crupier_no_repite_mesa_en_la_jornada(self):
         segundo = Turno.objects.create(fecha=self.fecha.replace(year=2030), hora_inicio=time(8), hora_fin=time(10))
         tercero = Turno.objects.create(fecha=self.fecha.replace(year=2030), hora_inicio=time(10), hora_fin=time(12))
         self.asignacion(segundo, self.e.mesa, self.e.crupier).save()
-        with self.assertRaisesMessage(ValidationError, 'RN-09'):
+        with self.assertRaisesMessage(ValidationError, 'no puede repetir mesa en la jornada'):
             self.asignacion(tercero, self.e.mesa, self.e.crupier).full_clean()
         self.asignacion(tercero, self.e.mesa, self.e.crupier2).full_clean()  # rotación válida
 

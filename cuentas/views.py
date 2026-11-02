@@ -238,7 +238,7 @@ def empleado_habilitar_jugador(request, pk):
         except ValidationError as e:
             form.add_error(None, e)
         else:
-            messages.success(request, f'{empleado.persona.nombre_completo} ahora también puede jugar (RN-28).')
+            messages.success(request, f'{empleado.persona.nombre_completo} ahora también puede jugar.')
             return redirect('cuentas:empleados')
     return render(request, 'form.html', {
         'titulo': f'Registrar a {empleado.persona.nombre_completo} como jugador', 'form': form,

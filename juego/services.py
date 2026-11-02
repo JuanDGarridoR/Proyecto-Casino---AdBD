@@ -88,19 +88,19 @@ def _validar_apuesta(ronda, jugador, monto, factor, *, permitir_sin_detalle=Fals
         raise ValidationError('La ronda ya está cerrada; no admite apuestas.')
     if not mesa.juego.registro_detallado and not permitir_sin_detalle:
         raise ValidationError(
-            f'{mesa.juego} no permite registro detallado: las apuestas se registran al evidenciarse el resultado (RN-24).'
+            f'{mesa.juego} no permite registro detallado: las apuestas se registran al evidenciarse el resultado.'
         )
     if jugador.estado != EstadoCuenta.ACTIVO:
         raise ValidationError(f'El jugador {jugador.codigo_cliente} está en estado {jugador.estado} y no puede apostar.')
     if monto is None or not (mesa.monto_minimo <= monto <= mesa.monto_maximo):
         raise ValidationError(
-            f'El monto debe estar entre {mesa.monto_minimo:,.2f} y {mesa.monto_maximo:,.2f} (RN-20).'
+            f'El monto debe estar entre {mesa.monto_minimo:,.2f} y {mesa.monto_maximo:,.2f}.'
         )
     if factor is None or factor <= 0:
         raise ValidationError('El factor de pago debe ser positivo.')
     if jugador.saldo_fichas < monto:
         raise ValidationError(
-            f'Saldo insuficiente: {jugador.codigo_cliente} tiene {jugador.saldo_fichas:,.2f} fichas (RN-21).'
+            f'Saldo insuficiente: {jugador.codigo_cliente} tiene {jugador.saldo_fichas:,.2f} fichas.'
         )
 
 

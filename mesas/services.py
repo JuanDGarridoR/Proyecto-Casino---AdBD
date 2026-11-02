@@ -32,7 +32,7 @@ def generar_turnos(fecha, hora_inicio, hora_fin, duracion_minutos):
     """Define la duración de los turnos de un día creando turnos consecutivos (RN-10: máx. 2 h)."""
     duracion = timedelta(minutes=duracion_minutos)
     if duracion <= timedelta(0) or duracion > Turno.DURACION_MAXIMA:
-        raise ValidationError('La duración del turno debe estar entre 1 y 120 minutos (RN-10).')
+        raise ValidationError('La duración del turno debe estar entre 1 y 120 minutos.')
     actual = datetime.combine(fecha, hora_inicio)
     limite = datetime.combine(fecha, hora_fin)
     if limite <= actual:

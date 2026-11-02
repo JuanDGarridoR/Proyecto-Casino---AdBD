@@ -37,7 +37,7 @@ def registrar_jugador(*, username, documento, nombre_completo, salt, password_ha
     """RN-01/RN-02: registro previo obligatorio con todos los datos del jugador."""
     from cuentas.services import crear_persona_usuario, sincronizar_grupos
     if edad < settings.CASINO_EDAD_MINIMA:
-        raise ValidationError('No se permite el registro de menores de edad (RN-03).')
+        raise ValidationError('No se permite el registro de menores de edad.')
     persona, usuario = crear_persona_usuario(
         username=username, documento=documento, nombre_completo=nombre_completo,
         salt=salt, password_hash=password_hash,
@@ -151,13 +151,13 @@ def evaluar_estado(jugador):
         ganancias = ganancias_netas_empleado(jugador)
         if ganancias > empleado.salario:
             _cambiar_estado(jugador, EstadoCuenta.INVESTIGACION,
-                            f'Empleado con ganancias ({ganancias:,.0f}) superiores a 1 salario (RN-30)')
+                            f'Empleado con ganancias ({ganancias:,.0f}) superiores a 1 salario')
             return jugador
         deuda = deuda_empleado(jugador)
         limite = empleado.salario * 2
         if deuda > limite and jugador.estado == EstadoCuenta.ACTIVO:
             _cambiar_estado(jugador, EstadoCuenta.SUSPENDIDO,
-                            f'Empleado con pérdidas ({deuda:,.0f}) superiores a 2 salarios (RN-29)')
+                            f'Empleado con pérdidas ({deuda:,.0f}) superiores a 2 salarios')
             return jugador
         if (jugador.estado == EstadoCuenta.SUSPENDIDO and jugador.suspendido_hasta is None
                 and deuda <= limite):
@@ -169,7 +169,7 @@ def evaluar_estado(jugador):
         if perdidas > umbral:
             _cambiar_estado(
                 jugador, EstadoCuenta.SUSPENDIDO,
-                f'Pérdidas del día ({perdidas:,.0f}) superiores al umbral ({umbral:,.0f}) (RN-25)',
+                f'Pérdidas del día ({perdidas:,.0f}) superiores al umbral ({umbral:,.0f})',
                 hasta=ahora + timedelta(hours=settings.CASINO_HORAS_SUSPENSION),
             )
     return jugador
@@ -188,7 +188,7 @@ def solicitar_pausa(jugador):
     jugador = Jugador.objects.select_for_update().get(pk=jugador.pk)
     if jugador.estado != EstadoCuenta.ACTIVO:
         raise ValidationError(f'La cuenta ya está en estado {jugador.estado}.')
-    _cambiar_estado(jugador, EstadoCuenta.SUSPENDIDO, 'Autoexclusión voluntaria solicitada por el jugador (RN-26)',
+    _cambiar_estado(jugador, EstadoCuenta.SUSPENDIDO, 'Autoexclusión voluntaria solicitada por el jugador',
                     hasta=timezone.now() + timedelta(hours=settings.CASINO_HORAS_SUSPENSION))
     return jugador
 

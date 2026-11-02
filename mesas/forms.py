@@ -34,7 +34,7 @@ class GenerarTurnosForm(EstiloBootstrapMixin, forms.Form):
     hora_inicio = forms.TimeField(label='Inicio de la jornada', widget=forms.TimeInput(attrs={'type': 'time'}))
     hora_fin = forms.TimeField(label='Fin de la jornada', widget=forms.TimeInput(attrs={'type': 'time'}))
     duracion_minutos = forms.IntegerField(label='Duración de cada turno (minutos)', min_value=1, max_value=120,
-                                          initial=120, help_text='Máximo 120 minutos (RN-10).')
+                                          initial=120, help_text='Máximo 120 minutos.')
 
 
 class AsignacionForm(EstiloBootstrapMixin, forms.ModelForm):

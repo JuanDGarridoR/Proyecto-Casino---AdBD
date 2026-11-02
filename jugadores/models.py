@@ -31,7 +31,7 @@ class Jugador(models.Model):
         constraints = [
             models.CheckConstraint(
                 condition=Q(edad__gte=settings.CASINO_EDAD_MINIMA), name='jugador_mayor_de_edad',
-                violation_error_message='El jugador debe ser mayor de edad (RN-03).',
+                violation_error_message='El jugador debe ser mayor de edad.',
             ),
             models.CheckConstraint(
                 condition=Q(saldo_fichas__gte=0), name='jugador_saldo_no_negativo',
