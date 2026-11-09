@@ -1,13 +1,510 @@
-body { background: #f4f6f9; }
-.navbar-brand { font-weight: 700; letter-spacing: .5px; }
-.card-metrica .valor { font-size: 1.8rem; font-weight: 700; }
-.table td, .table th { vertical-align: middle; }
+/* =========================================================================
+   Tema visual "Casino" sobre Bootstrap 5.3 (modo oscuro).
+   Todos los colores salen de las variables de :root. Para ajustar la paleta,
+   cambie solo este bloque (y su versión *-rgb, que usa Bootstrap para
+   transparencias).
+   ========================================================================= */
+:root {
+  /* Paleta base */
+  --casino-fondo: #0B1F17;            /* verde paño oscuro */
+  --casino-fondo-rgb: 11, 31, 23;
+  --casino-panel: #10291F;            /* superficie de tarjetas */
+  --casino-panel-rgb: 16, 41, 31;
+  --casino-panel-alto: #163628;       /* encabezados, hover */
+  --casino-panel-alto-rgb: 22, 54, 40;
+  --casino-dorado: #D4AF37;
+  --casino-dorado-rgb: 212, 175, 55;
+  --casino-dorado-claro: #F0D57A;
+  --casino-dorado-oscuro: #9E7C1F;
+  --casino-rojo: #B11226;
+  --casino-rojo-rgb: 177, 18, 38;
+  --casino-rojo-claro: #D6283E;
+  --casino-texto: #F5F0E1;
+  --casino-texto-rgb: 245, 240, 225;
+  --casino-texto-suave: #B8B3A2;
+  --casino-texto-suave-rgb: 184, 179, 162;
+  --casino-texto-oscuro: #1A1406;     /* texto sobre dorado */
+
+  /* Colores de estado (badges, alertas) */
+  --casino-exito: #2F9E62;
+  --casino-exito-rgb: 47, 158, 98;
+  --casino-aviso: #E2A72E;
+  --casino-aviso-rgb: 226, 167, 46;
+  --casino-info: #3E9C95;
+  --casino-info-rgb: 62, 156, 149;
+  --casino-neutro: #5E6B63;
+  --casino-neutro-rgb: 94, 107, 99;
+
+  /* Bordes, sombras y degradados derivados */
+  --casino-borde: rgba(var(--casino-dorado-rgb), .28);
+  --casino-borde-suave: rgba(var(--casino-dorado-rgb), .14);
+  --casino-sombra: 0 8px 24px rgba(0, 0, 0, .35);
+  --casino-brillo: 0 0 0 1px rgba(var(--casino-dorado-rgb), .5), 0 0 18px rgba(var(--casino-dorado-rgb), .35);
+  --casino-degradado-dorado: linear-gradient(135deg, var(--casino-dorado-claro) 0%, var(--casino-dorado) 45%, var(--casino-dorado-oscuro) 100%);
+  --casino-degradado-rojo: linear-gradient(135deg, var(--casino-rojo-claro) 0%, var(--casino-rojo) 60%, #7E0C1B 100%);
+
+  /* Tipografía */
+  --casino-fuente-titulos: 'Cinzel', Georgia, 'Times New Roman', serif;
+  --casino-fuente-texto: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --casino-radio: .6rem;
+}
+
+/* ---- Variables de Bootstrap apuntando a la paleta ---------------------- */
+:root[data-bs-theme=dark] {
+  --bs-body-font-family: var(--casino-fuente-texto);
+  --bs-body-bg: var(--casino-fondo);
+  --bs-body-bg-rgb: var(--casino-fondo-rgb);
+  --bs-body-color: var(--casino-texto);
+  --bs-body-color-rgb: var(--casino-texto-rgb);
+  --bs-emphasis-color: var(--casino-texto);
+  --bs-emphasis-color-rgb: var(--casino-texto-rgb);
+  --bs-heading-color: var(--casino-texto);
+  --bs-secondary-color: var(--casino-texto-suave);
+  --bs-secondary-color-rgb: var(--casino-texto-suave-rgb);
+  --bs-secondary-bg: var(--casino-panel-alto);
+  --bs-tertiary-bg: var(--casino-panel);
+  --bs-border-color: var(--casino-borde);
+  --bs-border-color-translucent: var(--casino-borde-suave);
+  --bs-border-radius: var(--casino-radio);
+  --bs-link-color: var(--casino-dorado);
+  --bs-link-color-rgb: var(--casino-dorado-rgb);
+  --bs-link-hover-color: var(--casino-dorado-claro);
+  --bs-link-hover-color-rgb: 240, 213, 122;
+
+  --bs-primary: var(--casino-dorado);
+  --bs-primary-rgb: var(--casino-dorado-rgb);
+  --bs-danger: var(--casino-rojo);
+  --bs-danger-rgb: var(--casino-rojo-rgb);
+  --bs-success: var(--casino-exito);
+  --bs-success-rgb: var(--casino-exito-rgb);
+  --bs-warning: var(--casino-aviso);
+  --bs-warning-rgb: var(--casino-aviso-rgb);
+  --bs-info: var(--casino-info);
+  --bs-info-rgb: var(--casino-info-rgb);
+  --bs-secondary: var(--casino-neutro);
+  --bs-secondary-rgb: var(--casino-neutro-rgb);
+
+  --bs-primary-text-emphasis: var(--casino-dorado-claro);
+  --bs-primary-bg-subtle: rgba(var(--casino-dorado-rgb), .12);
+  --bs-primary-border-subtle: rgba(var(--casino-dorado-rgb), .45);
+  --bs-danger-text-emphasis: #F2A3AD;
+  --bs-danger-bg-subtle: rgba(var(--casino-rojo-rgb), .22);
+  --bs-danger-border-subtle: rgba(var(--casino-rojo-rgb), .6);
+  --bs-success-text-emphasis: #9EDDB9;
+  --bs-success-bg-subtle: rgba(var(--casino-exito-rgb), .16);
+  --bs-success-border-subtle: rgba(var(--casino-exito-rgb), .5);
+  --bs-warning-text-emphasis: #F3D08A;
+  --bs-warning-bg-subtle: rgba(var(--casino-aviso-rgb), .14);
+  --bs-warning-border-subtle: rgba(var(--casino-aviso-rgb), .5);
+  --bs-info-text-emphasis: #A6DCD7;
+  --bs-info-bg-subtle: rgba(var(--casino-info-rgb), .15);
+  --bs-info-border-subtle: rgba(var(--casino-info-rgb), .5);
+  --bs-secondary-text-emphasis: var(--casino-texto-suave);
+  --bs-secondary-bg-subtle: rgba(var(--casino-texto-rgb), .05);
+  --bs-secondary-border-subtle: var(--casino-borde-suave);
+  --bs-light-text-emphasis: var(--casino-texto);
+  --bs-light-bg-subtle: rgba(var(--casino-texto-rgb), .05);
+  --bs-light-border-subtle: var(--casino-borde);
+}
+
+/* ---- Base --------------------------------------------------------------- */
+body {
+  background-color: var(--casino-fondo);
+  /* Paño de mesa: luz central suave y textura discreta */
+  background-image:
+    radial-gradient(ellipse at 50% -10%, rgba(var(--casino-exito-rgb), .16) 0%, transparent 60%),
+    repeating-linear-gradient(45deg, rgba(255, 255, 255, .012) 0 2px, transparent 2px 6px);
+  background-attachment: fixed;
+  color: var(--casino-texto);
+  font-family: var(--casino-fuente-texto);
+  min-height: 100vh;
+}
+
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6, .card-title, .navbar-brand {
+  font-family: var(--casino-fuente-titulos);
+  letter-spacing: .03em;
+  color: var(--casino-texto);
+}
+.contenido-casino h3 { font-weight: 600; }
+.contenido-casino > h3,
+.contenido-casino > .d-flex > h3,
+.contenido-casino > h5 {
+  position: relative;
+  padding-bottom: .4rem;
+}
+.contenido-casino > h3::after,
+.contenido-casino > .d-flex > h3::after,
+.contenido-casino > h5::after {
+  content: "";
+  position: absolute; left: 0; bottom: 0;
+  width: 3rem; height: 2px;
+  background: var(--casino-degradado-dorado);
+  border-radius: 2px;
+}
+h3 small, h3 .small { font-family: var(--casino-fuente-texto); letter-spacing: 0; }
+
+a { text-decoration: none; }
+a:hover { text-decoration: underline; text-underline-offset: 3px; }
+.text-muted { color: var(--casino-texto-suave) !important; }
+.text-dark { color: var(--casino-texto-oscuro) !important; }
+.text-light { color: var(--casino-texto) !important; }
+.text-success { color: #6FD39B !important; }
+.text-danger { color: #F0707F !important; }
+::selection { background: rgba(var(--casino-dorado-rgb), .35); }
+
+/* ---- Barra de navegación ----------------------------------------------- */
+.navbar-casino {
+  background: linear-gradient(180deg, #06140E 0%, #0A1C14 100%);
+  border-bottom: 1px solid var(--casino-borde);
+  box-shadow: 0 1px 0 rgba(var(--casino-dorado-rgb), .12), 0 6px 20px rgba(0, 0, 0, .45);
+  position: relative;
+}
+.navbar-casino::after {
+  /* Filo dorado bajo la barra */
+  content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--casino-dorado), transparent);
+  opacity: .7;
+}
+.navbar-casino .navbar-brand {
+  font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--casino-dorado);
+  display: inline-flex; align-items: center; gap: .55rem;
+}
+.navbar-casino .navbar-brand:hover { color: var(--casino-dorado-claro); text-decoration: none; }
+/* Ficha de casino como logotipo */
+.marca-ficha {
+  width: 2rem; height: 2rem; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: .85rem; color: var(--casino-texto);
+  background:
+    radial-gradient(circle, var(--casino-rojo) 0 52%, transparent 53%),
+    repeating-conic-gradient(var(--casino-texto) 0 15deg, var(--casino-rojo) 15deg 45deg);
+  box-shadow: 0 0 0 2px var(--casino-dorado), 0 2px 8px rgba(0, 0, 0, .5);
+}
+.navbar-casino .nav-link {
+  color: rgba(var(--casino-texto-rgb), .78);
+  border-radius: 999px;
+  padding-left: .6rem !important; padding-right: .6rem !important;
+  transition: color .15s, background-color .15s;
+}
+.navbar-casino .nav-link:hover,
+.navbar-casino .nav-link:focus,
+.navbar-casino .nav-link.show {
+  color: var(--casino-dorado-claro);
+  background-color: rgba(var(--casino-dorado-rgb), .1);
+  text-decoration: none;
+}
+.navbar-casino .navbar-text { color: var(--casino-texto); white-space: nowrap; }
+.navbar-casino .navbar-toggler { border-color: var(--casino-borde); }
+.navbar-casino .badge.bg-secondary {
+  background: transparent !important;
+  border: 1px solid var(--casino-borde);
+  color: var(--casino-dorado);
+  font-weight: 600;
+}
+
+/* ---- Tarjetas ----------------------------------------------------------- */
+.card {
+  --bs-card-bg: var(--casino-panel);
+  --bs-card-border-color: var(--casino-borde);
+  --bs-card-cap-bg: rgba(var(--casino-dorado-rgb), .06);
+  --bs-card-cap-color: var(--casino-texto);
+  --bs-card-color: var(--casino-texto);
+  --bs-card-border-radius: var(--casino-radio);
+  background: var(--casino-panel);
+  background-image: linear-gradient(180deg, rgba(var(--casino-panel-alto-rgb), .9) 0%, rgba(var(--casino-panel-rgb), .95) 100%);
+}
+.card { box-shadow: var(--casino-sombra) !important; }
+.card-header {
+  border-bottom-color: var(--casino-borde-suave);
+  font-family: var(--casino-fuente-texto);
+}
+.card-header strong { color: var(--casino-dorado-claro); font-weight: 600; letter-spacing: .02em; }
+.card-footer { background: rgba(var(--casino-dorado-rgb), .04); border-top-color: var(--casino-borde-suave); }
+.card.border-warning { border-color: rgba(var(--casino-aviso-rgb), .55) !important; }
+.card.border-danger  { border-color: rgba(var(--casino-rojo-rgb), .7) !important; }
+.card.border-success { border-color: rgba(var(--casino-exito-rgb), .6) !important; }
+.card.border-primary { border-color: var(--casino-dorado) !important; }
+.bg-warning-subtle { background-color: rgba(var(--casino-aviso-rgb), .12) !important; }
+.bg-danger-subtle  { background-color: rgba(var(--casino-rojo-rgb), .2) !important; }
+.bg-success-subtle { background-color: rgba(var(--casino-exito-rgb), .14) !important; }
+.bg-light:not(.badge) { background-color: rgba(var(--casino-texto-rgb), .05) !important; }
+
+/* Métricas: número grande con una ficha decorativa */
+.card-metrica { position: relative; overflow: hidden; }
+.card-metrica .card-body { position: relative; z-index: 1; }
+.card-metrica .text-muted { font-size: .8rem; text-transform: uppercase; letter-spacing: .08em; }
+.card-metrica .valor {
+  font-family: var(--casino-fuente-titulos);
+  font-size: 1.8rem; font-weight: 700;
+  color: var(--casino-dorado);
+  text-shadow: 0 0 18px rgba(var(--casino-dorado-rgb), .25);
+}
+.card-metrica .valor a { color: inherit; }
+.card-metrica .valor .badge { font-family: var(--casino-fuente-texto); font-size: 1rem; text-shadow: none; }
+.card-metrica::after {
+  content: ""; position: absolute; right: -1.4rem; bottom: -1.4rem;
+  width: 5.5rem; height: 5.5rem; border-radius: 50%;
+  background:
+    radial-gradient(circle, transparent 0 46%, var(--casino-dorado) 47% 50%, transparent 51%),
+    repeating-conic-gradient(var(--casino-dorado) 0 14deg, transparent 14deg 45deg);
+  opacity: .14;
+  pointer-events: none;
+}
+
+/* ---- Botones ------------------------------------------------------------ */
+.btn {
+  font-weight: 600;
+  letter-spacing: .02em;
+  border-radius: calc(var(--casino-radio) - .1rem);
+  transition: box-shadow .2s, filter .2s, transform .1s, background-color .2s, color .2s;
+}
+.btn:active { transform: translateY(1px); }
+.btn:focus-visible { box-shadow: var(--casino-brillo) !important; }
+
+/* Principal: degradado dorado */
+.btn-primary, .btn-warning {
+  --bs-btn-color: var(--casino-texto-oscuro);
+  --bs-btn-hover-color: var(--casino-texto-oscuro);
+  --bs-btn-active-color: var(--casino-texto-oscuro);
+  --bs-btn-disabled-color: var(--casino-texto-oscuro);
+  --bs-btn-border-color: var(--casino-dorado);
+  --bs-btn-hover-border-color: var(--casino-dorado-claro);
+  --bs-btn-active-border-color: var(--casino-dorado-claro);
+  --bs-btn-disabled-border-color: var(--casino-dorado-oscuro);
+  background: var(--casino-degradado-dorado);
+  box-shadow: 0 2px 10px rgba(var(--casino-dorado-rgb), .2);
+}
+.btn-primary:hover, .btn-warning:hover,
+.btn-primary:active, .btn-warning:active {
+  background: var(--casino-degradado-dorado);
+  filter: brightness(1.1);
+  box-shadow: var(--casino-brillo);
+}
+
+/* Acciones importantes: rojo */
+.btn-danger {
+  --bs-btn-color: var(--casino-texto);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-active-color: #fff;
+  --bs-btn-border-color: var(--casino-rojo-claro);
+  --bs-btn-hover-border-color: var(--casino-dorado);
+  --bs-btn-active-border-color: var(--casino-dorado);
+  background: var(--casino-degradado-rojo);
+}
+.btn-danger:hover, .btn-danger:active {
+  background: var(--casino-degradado-rojo);
+  filter: brightness(1.12);
+  box-shadow: 0 0 0 1px rgba(var(--casino-dorado-rgb), .5), 0 0 18px rgba(var(--casino-rojo-rgb), .55);
+}
+
+/* Éxito (abrir ronda, aprobar): verde paño con filo dorado */
+.btn-success {
+  --bs-btn-color: var(--casino-texto);
+  --bs-btn-bg: #1F7A4A;
+  --bs-btn-border-color: var(--casino-dorado);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: #258F57;
+  --bs-btn-hover-border-color: var(--casino-dorado-claro);
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: #1A6A40;
+  --bs-btn-active-border-color: var(--casino-dorado-claro);
+}
+.btn-success:hover { box-shadow: var(--casino-brillo); }
+
+/* Oscuro y secundario: superficie con borde dorado */
+.btn-dark, .btn-secondary {
+  --bs-btn-color: var(--casino-dorado-claro);
+  --bs-btn-bg: #06140E;
+  --bs-btn-border-color: var(--casino-borde);
+  --bs-btn-hover-color: var(--casino-dorado-claro);
+  --bs-btn-hover-bg: #0E271C;
+  --bs-btn-hover-border-color: var(--casino-dorado);
+  --bs-btn-active-color: var(--casino-dorado-claro);
+  --bs-btn-active-bg: #0E271C;
+  --bs-btn-active-border-color: var(--casino-dorado);
+  --bs-btn-disabled-color: var(--casino-texto-suave);
+  --bs-btn-disabled-bg: #0E211A;
+  --bs-btn-disabled-border-color: var(--casino-borde-suave);
+}
+.btn-dark:hover, .btn-secondary:hover { box-shadow: var(--casino-brillo); }
+
+/* Contorno: borde dorado, relleno al pasar el mouse */
+.btn-outline-primary, .btn-outline-secondary, .btn-outline-light {
+  --bs-btn-color: var(--casino-dorado);
+  --bs-btn-border-color: var(--casino-borde);
+  --bs-btn-hover-color: var(--casino-dorado-claro);
+  --bs-btn-hover-bg: rgba(var(--casino-dorado-rgb), .1);
+  --bs-btn-hover-border-color: var(--casino-dorado);
+  --bs-btn-active-color: var(--casino-texto-oscuro);
+  --bs-btn-active-bg: var(--casino-dorado);
+  --bs-btn-active-border-color: var(--casino-dorado);
+}
+.btn-outline-secondary { --bs-btn-color: var(--casino-texto); }
+.btn-outline-primary:hover, .btn-outline-secondary:hover, .btn-outline-light:hover { box-shadow: var(--casino-brillo); }
+.btn-outline-danger {
+  --bs-btn-color: #F0707F;
+  --bs-btn-border-color: rgba(var(--casino-rojo-rgb), .8);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: var(--casino-rojo);
+  --bs-btn-hover-border-color: var(--casino-rojo-claro);
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: var(--casino-rojo);
+  --bs-btn-active-border-color: var(--casino-rojo-claro);
+}
+.btn-outline-danger:hover { box-shadow: 0 0 14px rgba(var(--casino-rojo-rgb), .5); }
+.btn-link {
+  --bs-btn-color: var(--casino-texto-suave);
+  --bs-btn-hover-color: var(--casino-dorado-claro);
+  font-weight: 500;
+}
+
+/* ---- Tablas ------------------------------------------------------------- */
+.table {
+  --bs-table-bg: transparent;
+  --bs-table-color: var(--casino-texto);
+  --bs-table-border-color: var(--casino-borde-suave);
+  --bs-table-hover-bg: rgba(var(--casino-dorado-rgb), .07);
+  --bs-table-hover-color: var(--casino-texto);
+  --bs-table-striped-bg: rgba(var(--casino-texto-rgb), .03);
+}
+.table > thead > tr > th,
+.table-light {
+  --bs-table-bg: rgba(var(--casino-dorado-rgb), .08);
+  --bs-table-color: var(--casino-dorado-claro);
+  --bs-table-border-color: var(--casino-borde);
+  font-size: .78rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: .06em;
+}
+.table-light th { color: var(--casino-dorado-claro); }
+.table-success {
+  --bs-table-bg: rgba(var(--casino-exito-rgb), .14);
+  --bs-table-color: var(--casino-texto);
+  --bs-table-border-color: rgba(var(--casino-exito-rgb), .3);
+  --bs-table-hover-bg: rgba(var(--casino-exito-rgb), .2);
+  --bs-table-hover-color: var(--casino-texto);
+}
+.table-responsive { border-radius: var(--casino-radio); }
+/* Aire en los bordes de las tablas dentro de tarjetas */
+.card .table > :not(caption) > * > *:first-child { padding-left: 1rem; }
+.card .table > :not(caption) > * > *:last-child { padding-right: 1rem; }
+/* Tablas sueltas (fuera de una tarjeta) con marco de tarjeta */
+.contenido-casino > .table-responsive,
+.contenido-casino > .table {
+  background: rgba(var(--casino-panel-rgb), .85);
+  border: 1px solid var(--casino-borde);
+  border-radius: var(--casino-radio);
+  box-shadow: var(--casino-sombra);
+}
+.contenido-casino > .table { border-collapse: separate; border-spacing: 0; overflow: hidden; }
+
+/* ---- Badges ------------------------------------------------------------- */
+.badge { font-weight: 600; letter-spacing: .02em; border-radius: 999px; padding: .38em .7em; }
+.badge.bg-primary { background: var(--casino-degradado-dorado) !important; color: var(--casino-texto-oscuro); }
+.badge.bg-danger  { background: var(--casino-rojo) !important; color: #fff; }
+.badge.bg-warning { color: var(--casino-texto-oscuro) !important; }
+.badge.bg-secondary { background: rgba(var(--casino-neutro-rgb), .55) !important; color: var(--casino-texto); }
+.badge.bg-info {
+  background: rgba(var(--casino-dorado-rgb), .14) !important;
+  color: var(--casino-dorado-claro) !important;
+  border: 1px solid var(--casino-borde);
+}
+.badge.bg-light {
+  background: transparent !important;
+  color: var(--casino-texto) !important;
+  border: 1px solid rgba(var(--casino-texto-rgb), .35);
+}
+
+/* ---- Alertas ------------------------------------------------------------ */
+.alert { border-radius: var(--casino-radio); border-left-width: 4px; box-shadow: 0 4px 14px rgba(0, 0, 0, .25); }
+.alert-light {
+  --bs-alert-bg: rgba(var(--casino-texto-rgb), .04);
+  --bs-alert-color: var(--casino-texto);
+  --bs-alert-border-color: var(--casino-borde);
+}
+.alert-light.border { border-color: var(--casino-borde) !important; }
+
+/* ---- Listas, pestañas y menú desplegable -------------------------------- */
+.list-group {
+  --bs-list-group-bg: transparent;
+  --bs-list-group-color: var(--casino-texto);
+  --bs-list-group-border-color: var(--casino-borde-suave);
+  --bs-list-group-action-hover-bg: rgba(var(--casino-dorado-rgb), .07);
+  --bs-list-group-active-bg: rgba(var(--casino-dorado-rgb), .2);
+  --bs-list-group-active-border-color: var(--casino-dorado);
+}
+.nav-tabs {
+  --bs-nav-tabs-border-color: var(--casino-borde);
+  --bs-nav-tabs-link-hover-border-color: var(--casino-borde-suave) var(--casino-borde-suave) var(--casino-borde);
+  --bs-nav-tabs-link-active-color: var(--casino-dorado);
+  --bs-nav-tabs-link-active-bg: var(--casino-panel);
+  --bs-nav-tabs-link-active-border-color: var(--casino-borde) var(--casino-borde) var(--casino-panel);
+}
+.nav-tabs .nav-link { color: var(--casino-texto-suave); }
+.nav-tabs .nav-link.active { font-weight: 600; box-shadow: inset 0 2px 0 var(--casino-dorado); }
+.dropdown-menu {
+  --bs-dropdown-bg: var(--casino-panel);
+  --bs-dropdown-border-color: var(--casino-borde);
+  --bs-dropdown-link-color: var(--casino-texto);
+  --bs-dropdown-link-hover-color: var(--casino-dorado-claro);
+  --bs-dropdown-link-hover-bg: rgba(var(--casino-dorado-rgb), .1);
+  --bs-dropdown-link-active-color: var(--casino-texto-oscuro);
+  --bs-dropdown-link-active-bg: var(--casino-dorado);
+  box-shadow: var(--casino-sombra);
+}
+
+/* ---- Formularios -------------------------------------------------------- */
+.form-label { color: var(--casino-dorado-claro); font-size: .9rem; }
+.form-control, .form-select {
+  background-color: rgba(4, 14, 10, .55);
+  border-color: var(--casino-borde);
+  color: var(--casino-texto);
+}
+.form-control::placeholder { color: rgba(var(--casino-texto-suave-rgb), .6); }
+.form-control:focus, .form-select:focus {
+  background-color: rgba(4, 14, 10, .75);
+  border-color: var(--casino-dorado);
+  color: var(--casino-texto);
+  box-shadow: 0 0 0 .2rem rgba(var(--casino-dorado-rgb), .2);
+}
+.form-control:disabled, .form-select:disabled { background-color: rgba(var(--casino-texto-rgb), .04); }
+.form-select option { background: var(--casino-panel); color: var(--casino-texto); }
+.form-check-input {
+  background-color: rgba(4, 14, 10, .6);
+  border-color: rgba(var(--casino-dorado-rgb), .55);
+}
+.form-check-input:focus { border-color: var(--casino-dorado); box-shadow: 0 0 0 .2rem rgba(var(--casino-dorado-rgb), .2); }
+.form-check-input:checked { background-color: var(--casino-dorado); border-color: var(--casino-dorado); }
+.form-check-input:checked[type=checkbox] {
+  --bs-form-check-bg-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%231A1406' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3e%3c/svg%3e");
+}
+.form-check-input:checked[type=radio] {
+  --bs-form-check-bg-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='2' fill='%231A1406'/%3e%3c/svg%3e");
+}
+.form-text { color: var(--casino-texto-suave); }
+
+/* Lista de casillas múltiples (p. ej. "Juegos que conoce") como fichas */
 .lista-checks > div { display: flex; flex-wrap: wrap; gap: .5rem; }
 .lista-checks > div > div { margin: 0; }
 .lista-checks label {
   display: flex; align-items: center; gap: .5rem;
-  padding: .4rem .8rem; border: 1px solid #dee2e6; border-radius: .375rem;
-  background: #fff; cursor: pointer; white-space: nowrap;
+  padding: .4rem .85rem;
+  border: 1px solid var(--casino-borde);
+  border-radius: 999px;
+  background: rgba(4, 14, 10, .45);
+  color: var(--casino-texto);
+  cursor: pointer; white-space: nowrap;
+  transition: border-color .15s, background-color .15s, box-shadow .15s;
 }
+.lista-checks label:hover { border-color: var(--casino-dorado); }
 .lista-checks .form-check-input { margin: 0; flex-shrink: 0; }
-.lista-checks label:has(input:checked) { border-color: #0d6efd; background: #e7f1ff; }
+.lista-checks label:has(input:checked) {
+  border-color: var(--casino-dorado);
+  background: rgba(var(--casino-dorado-rgb), .14);
+  box-shadow: 0 0 10px rgba(var(--casino-dorado-rgb), .2);
+}
+
+/* ---- Varios ------------------------------------------------------------- */
+.table td, .table th { vertical-align: middle; }
+hr { border-color: var(--casino-borde); opacity: 1; }
+code { color: var(--casino-dorado-claro); }

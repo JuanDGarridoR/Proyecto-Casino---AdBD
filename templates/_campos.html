@@ -6,8 +6,8 @@
       {{ campo }} <label class="form-check-label" for="{{ campo.id_for_label }}">{{ campo.label }}</label>
   {% else %}
     <div class="mb-3">
-      <label class="form-label fw-semibold" {% if campo.widget_type != 'checkboxselectmultiple' %}for="{{ campo.id_for_label }}"{% endif %}>{{ campo.label }}</label>
-      <div {% if campo.widget_type == 'checkboxselectmultiple' %}class="lista-checks"{% endif %}>{{ campo }}</div>
+      <label class="form-label fw-semibold" {% if campo.widget_type != 'checkboxselectmultiple' and campo.widget_type != 'casillasmultiples' %}for="{{ campo.id_for_label }}"{% endif %}>{{ campo.label }}</label>
+      <div {% if campo.widget_type == 'checkboxselectmultiple' or campo.widget_type == 'casillasmultiples' %}class="lista-checks"{% endif %}>{{ campo }}</div>
   {% endif %}
       {% if campo.help_text %}<div class="form-text">{{ campo.help_text }}</div>{% endif %}
       {% for e in campo.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
