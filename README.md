@@ -6,6 +6,16 @@ Bases de Datos: Administración y Aplicaciones — Pontificia Universidad Javeri
 **Equipo:** Juan David Garrido Ramos · Andrés Felipe Torres Monroy · Alejandro Urbina<br>
 **Framework:** Django 5.2 (Python 3.12+) · **BD:** SQLite (desarrollo) o PostgreSQL
 
+## Inicio rápido (Windows · PowerShell)
+
+Con el proyecto ya instalado, desde la carpeta del proyecto:
+
+```powershell
+.\venv\Scripts\Activate.ps1      # 1. activar el entorno virtual
+python manage.py seed --reset    # 2. recargar los datos de prueba
+python manage.py runserver       # 3. iniciar el servidor → http://localhost:8000/
+```
+
 ## Instalación
 
 ```bash
