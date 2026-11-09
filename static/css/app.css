@@ -2,5 +2,12 @@ body { background: #f4f6f9; }
 .navbar-brand { font-weight: 700; letter-spacing: .5px; }
 .card-metrica .valor { font-size: 1.8rem; font-weight: 700; }
 .table td, .table th { vertical-align: middle; }
-.lista-checks > div > div { display: inline-block; margin-right: 1.2rem; }
-.lista-checks label { margin-left: .3rem; }
+.lista-checks > div { display: flex; flex-wrap: wrap; gap: .5rem; }
+.lista-checks > div > div { margin: 0; }
+.lista-checks label {
+  display: flex; align-items: center; gap: .5rem;
+  padding: .4rem .8rem; border: 1px solid #dee2e6; border-radius: .375rem;
+  background: #fff; cursor: pointer; white-space: nowrap;
+}
+.lista-checks .form-check-input { margin: 0; flex-shrink: 0; }
+.lista-checks label:has(input:checked) { border-color: #0d6efd; background: #e7f1ff; }

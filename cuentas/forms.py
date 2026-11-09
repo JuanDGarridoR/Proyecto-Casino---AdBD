@@ -8,6 +8,15 @@ from mesas.models import Juego
 from .models import Empleado, Persona, Usuario
 
 
+class CasillasMultiples(forms.CheckboxSelectMultiple):
+    """Casillas múltiples cuya clase CSS va solo en cada casilla, no en el contenedor."""
+
+    def get_context(self, name, value, attrs):
+        contexto = super().get_context(name, value, attrs)
+        contexto['widget']['attrs'].pop('class', None)
+        return contexto
+
+
 class EstiloBootstrapMixin:
     """Agrega las clases de Bootstrap a los widgets de cualquier formulario."""
 
@@ -92,7 +101,7 @@ class EmpleadoCrearForm(EstiloBootstrapMixin, DatosPersonaMixin, HashZeroKnowled
     salario = forms.DecimalField(min_value=1, max_digits=12, decimal_places=2)
     juegos = forms.ModelMultipleChoiceField(
         label='Juegos que conoce', queryset=Juego.objects.all(), required=False,
-        widget=forms.CheckboxSelectMultiple,
+        widget=CasillasMultiples,
     )
     tambien_jugador = forms.BooleanField(label='También juega como cliente', required=False)
     codigo_cliente = forms.CharField(label='Código de cliente', max_length=20, required=False)
@@ -126,7 +135,7 @@ class EmpleadoEditarForm(EstiloBootstrapMixin, forms.Form):
     salario = forms.DecimalField(min_value=1, max_digits=12, decimal_places=2)
     juegos = forms.ModelMultipleChoiceField(
         label='Juegos que conoce', queryset=Juego.objects.all(), required=False,
-        widget=forms.CheckboxSelectMultiple,
+        widget=CasillasMultiples,
     )
     activo = forms.BooleanField(label='Usuario activo (puede iniciar sesión)', required=False)
 
